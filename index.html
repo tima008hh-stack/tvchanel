@@ -113,7 +113,6 @@
             border: 0;
         }
 
-        /* Зона под ключи и ввод кода */
         footer {
             text-align: center;
             margin-top: 30px;
@@ -142,7 +141,6 @@
             border-bottom-color: #fff;
         }
 
-        /* Поле ввода */
         .code-input-group {
             display: flex;
             gap: 8px;
@@ -182,7 +180,6 @@
             opacity: 0.9;
         }
 
-        /* Блок вывода секретного ключа (изначально скрыт) */
         .secret-wrapper {
             display: none;
             opacity: 0;
@@ -251,14 +248,14 @@
         <div class="eq-bar-container" id="left-eq"></div>
 
         <div class="video-container">
-            <iframe src="https://vkvideo.ru" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" allowfullscreen></iframe>
+            <!-- Ссылка обновлена на плеер с автовоспроизведением -->
+            <iframe src="https://vkvideo.ru/video_ext.php?oid=786004866&id=456239025&hash=ffe0586b88e5fd20&hd=3&autoplay=1" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" allowfullscreen></iframe>
         </div>
 
         <div class="eq-bar-container" id="right-eq"></div>
     </div>
 
     <footer>
-        <!-- Форма для ввода кодового слова -->
         <div id="auth-block">
             <div class="hint-text">Чтобы получить ключ, напишите мне в ЛС ТикТока слово <a href="#" onclick="alert('Откройте TikTok, найдите профиль этого канала и напишите в личные сообщения!')">"ХОЧУ КЛЮЧ"</a></div>
             <div class="code-input-group">
@@ -267,7 +264,6 @@
             </div>
         </div>
 
-        <!-- Секретная зона, которая откроется -->
         <div id="secret-block" class="secret-wrapper">
             <div class="key-badge">ключ: <span id="key-value">17245455920002_21242547210882_4i5wvekzke</span></div>
             <button class="copy-btn" onclick="copyKey()">Скопировать ключ</button>
@@ -276,7 +272,6 @@
 
     <script>
         // --- НАСТРОЙКА КОДОВОГО СЛОВА ---
-        // Замените 'эфир' на любое слово, которое будете выдавать людям в ТикТоке
         const SECRET_WORD = 'эфир'; 
 
         function checkWord() {
@@ -305,7 +300,7 @@
             });
         }
 
-        // --- ЭКВАЛАЙЗЕР (РАБОТАЕТ ОТ МИКРОФОНА ПО КЛИКУ) ---
+        // --- ЭКВАЛАЙЗЕР ---
         const CELL_COUNT = 25;
         const leftEq = document.getElementById('left-eq');
         const rightEq = document.getElementById('right-eq');
@@ -330,10 +325,12 @@
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioContext.createAnalyser();
-const source = audioContext.createMediaStreamSource(stream);
-analyser.fftSize = 64;
-source.connect(analyser);
+                const analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                
+                analyser.fftSize = 64;
+                source.connect(analyser);
+                
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
 function updateVisualizer() {
@@ -367,3 +364,4 @@ updateVisualizer();
 console.log("Микрофон недоступен:", err);
 }
 }
+
