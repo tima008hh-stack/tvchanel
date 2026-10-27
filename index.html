@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Публичный интернет-канал</title>
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --container-bg: #161820;
+            --accent-color: #5181b8;
+            --text-main: #ffffff;
+            --text-muted: #707688;
+            --success-color: #4caf50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ff3347;
+            border-radius: 50%;
+            margin-right: 12px;
+            vertical-align: middle;
+            box-shadow: 0 0 10px #ff3347;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .main-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1440px;
+            gap: 30px;
+            margin: auto 0;
+        }
+
+        .eq-bar-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 450px;
+            width: 16px;
+            gap: 4px;
+        }
+
+        .eq-cell {
+            width: 100%;
+            flex-grow: 1;
+            background-color: #222531;
+            border-radius: 2px;
+            transition: background-color 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .video-container {
+            position: relative;
+            flex-grow: 1;
+            max-width: 1000px;
+            aspect-ratio: 16 / 9;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
+                        0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Зона под ключи и ввод кода */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .hint-text a {
+            color: var(--accent-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent-color);
+        }
+
+        .hint-text a:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        /* Поле ввода */
+        .code-input-group {
+            display: flex;
+            gap: 8px;
+            background: var(--container-bg);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: border-color 0.2s ease;
+        }
+
+        .code-input-group:focus-within {
+            border-color: var(--accent-color);
+        }
+
+        .code-input-group input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            width: 200px;
+        }
+
+        .code-input-group button {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .code-input-group button:hover {
+            opacity: 0.9;
+        }
+
+        /* Блок вывода секретного ключа (изначально скрыт) */
+        .secret-wrapper {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .secret-wrapper.visible {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .key-badge {
+            background-color: rgba(76, 175, 80, 0.1);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #fff;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .key-badge span {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .copy-btn:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .eq-bar-container {
+                display: none;
+            }
+            body {
+                padding: 20px 10px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Публичный интернет-канал</h1>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="eq-bar-container" id="left-eq"></div>
+
+        <div class="video-container">
+            <iframe src="https://vkvideo.ru" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" allowfullscreen></iframe>
+        </div>
+
+        <div class="eq-bar-container" id="right-eq"></div>
+    </div>
+
+    <footer>
+        <!-- Форма для ввода кодового слова -->
+        <div id="auth-block">
+            <div class="hint-text">Чтобы получить ключ, напишите мне в ЛС ТикТока слово <a href="#" onclick="alert('Откройте TikTok, найдите профиль этого канала и напишите в личные сообщения!')">"ХОЧУ КЛЮЧ"</a></div>
+            <div class="code-input-group">
+                <input type="text" id="word-input" placeholder="Введите кодовое слово..." autocomplete="off">
+                <button onclick="checkWord()">Получить</button>
+            </div>
+        </div>
+
+        <!-- Секретная зона, которая откроется -->
+        <div id="secret-block" class="secret-wrapper">
+            <div class="key-badge">ключ: <span id="key-value">17245455920002_21242547210882_4i5wvekzke</span></div>
+            <button class="copy-btn" onclick="copyKey()">Скопировать ключ</button>
+        </div>
+    </footer>
+
+    <script>
+        // --- НАСТРОЙКА КОДОВОГО СЛОВА ---
+        // Замените 'эфир' на любое слово, которое будете выдавать людям в ТикТоке
+        const SECRET_WORD = 'эфир'; 
+
+        function checkWord() {
+            const input = document.getElementById('word-input').value.trim().toLowerCase();
+            const authBlock = document.getElementById('auth-block');
+            const secretBlock = document.getElementById('secret-block');
+
+            if (input === SECRET_WORD.toLowerCase()) {
+                authBlock.style.display = 'none';
+                secretBlock.classList.add('visible');
+            } else {
+                alert('Неверное кодовое слово. Проверьте правильность или напишите автору в ТикТок.');
+            }
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('key-value').innerText;
+            navigator.clipboard.writeText(keyText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = 'Скопировано!';
+                btn.style.color = '#4caf50';
+                setTimeout(() => {
+                    btn.innerText = 'Скопировать ключ';
+                    btn.style.color = '';
+                }, 2000);
+            });
+        }
+
+        // --- ЭКВАЛАЙЗЕР (РАБОТАЕТ ОТ МИКРОФОНА ПО КЛИКУ) ---
+        const CELL_COUNT = 25;
+        const leftEq = document.getElementById('left-eq');
+        const rightEq = document.getElementById('right-eq');
+
+        function createBars(container) {
+            for (let i = 0; i < CELL_COUNT; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('eq-cell');
+                container.appendChild(cell);
+            }
+        }
+
+        createBars(leftEq);
+        createBars(rightEq);
+
+        const leftCells = Array.from(leftEq.children).reverse();
+        const rightCells = Array.from(rightEq.children).reverse();
+
+        document.body.addEventListener('click', initAudio, { once: true });
+
+        async function initAudio() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioContext.createAnalyser();
+const source = audioContext.createMediaStreamSource(stream);
+analyser.fftSize = 64;
+source.connect(analyser);
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+function updateVisualizer() {
+requestAnimationFrame(updateVisualizer);
+analyser.getByteFrequencyData(dataArray);
+let sum = 0;
+for (let i = 0; i < bufferLength; i++) {
+sum += dataArray[i];
+}
+const average = sum / bufferLength;
+const activeCells = Math.min(Math.floor((average / 120) * CELL_COUNT), CELL_COUNT);
+for (let i = 0; i < CELL_COUNT; i++) {
+if (i < activeCells) {
+const opacity = 0.4 + (i / CELL_COUNT) * 0.6;
+const activeColor = rgba(81, 129, 184, ${opacity});
+const shadow = 0 0 8px rgba(81, 129, 184, ${opacity * 0.5});
+leftCells[i].style.backgroundColor = activeColor;
+leftCells[i].style.boxShadow = shadow;
+rightCells[i].style.backgroundColor = activeColor;
+rightCells[i].style.boxShadow = shadow;
+} else {
+leftCells[i].style.backgroundColor = '#222531';
+leftCells[i].style.boxShadow = 'none';
+rightCells[i].style.backgroundColor = '#222531';
+rightCells[i].style.boxShadow = 'none';
+}
+}
+}
+updateVisualizer();
+} catch (err) {
+console.log("Микрофон недоступен:", err);
+}
+}
